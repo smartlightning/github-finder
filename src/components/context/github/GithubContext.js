@@ -11,6 +11,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
   // trigger state changes
@@ -58,6 +59,32 @@ export const GithubProvider = ({ children }) => {
     }
   };
 
+  // get user repos
+  const getUserRepos = async (login) => {
+    setLoading();
+
+    const params = new URLSearchParams({
+      sort: 'created',
+      per_page: 5,
+    });
+    // fetch data from the Github API and search by user
+    const response = await fetch(
+      `${GITHUB_URL}/users/${login}/repos?${params}`,
+      {
+        headers: {
+          Authorization: `token${GITHUB_TOKEN}`,
+        },
+      }
+    );
+    // destructure the return from from Github api to get all users
+    const data = await response.json();
+    // update the state for users  with new data we get from the api call
+    dispatch({
+      type: 'GET_REPOS',
+      payload: data,
+    });
+  };
+
   const clearUsers = async () =>
     dispatch({
       // get current state of reducer type Clear users
@@ -76,9 +103,11 @@ export const GithubProvider = ({ children }) => {
         users: state.users,
         user: state.user,
         loading: state.loading,
+        repos: state.repos,
         searchUsers,
         clearUsers,
         getUser,
+        getUserRepos,
       }}>
       {children}
     </GithubContext.Provider>

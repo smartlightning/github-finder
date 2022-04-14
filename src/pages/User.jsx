@@ -3,13 +3,17 @@ import Spinner from '../components/layout/Spinner';
 import { useContext, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import GithubContext from '../components/context/github/GithubContext';
+import RepoList from '../components/repos/RepoList';
 
 const User = () => {
-  const { getUser, user, loading } = useContext(GithubContext);
+  const { getUser, user, loading, getUserRepos, repos } =
+    useContext(GithubContext);
   const params = useParams();
 
   useEffect(() => {
     getUser(params.login);
+    getUserRepos(params.login);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const {
@@ -36,7 +40,7 @@ const User = () => {
     <>
       <div className='w-full mx-auto lg:w-10/12'>
         <div className='mb-4'>
-          <Link to='/' className='btn btn-ghost'>
+          <Link to='/' className='btn btn-outline'>
             Back To Search
           </Link>
         </div>
@@ -112,7 +116,7 @@ const User = () => {
         <div className='w-full py-5 mb-6 rounded-lg shadow-md bg-base-100 stats'>
           <div className='grid grid-cols-1 md:grid-cols-3'>
             <div className='stat'>
-              <div className='stat-figure text-secondary'>
+              <div className='stat-figure text-primary'>
                 <FaUsers className='text-3xl md:text-5xl' />
               </div>
               <div className='stat-title pr-5'>Followers</div>
@@ -122,7 +126,7 @@ const User = () => {
             </div>
 
             <div className='stat'>
-              <div className='stat-figure text-secondary'>
+              <div className='stat-figure text-primary'>
                 <FaUserFriends className='text-3xl md:text-5xl' />
               </div>
               <div className='stat-title pr-5'>Following</div>
@@ -132,7 +136,7 @@ const User = () => {
             </div>
 
             <div className='stat'>
-              <div className='stat-figure text-secondary'>
+              <div className='stat-figure text-primary'>
                 <FaCodepen className='text-3xl md:text-5xl' />
               </div>
               <div className='stat-title pr-5'>Public Repos</div>
@@ -142,7 +146,7 @@ const User = () => {
             </div>
 
             <div className='stat'>
-              <div className='stat-figure text-secondary'>
+              <div className='stat-figure text-primary'>
                 <FaStore className='text-3xl md:text-5xl' />
               </div>
               <div className='stat-title pr-5'>Public Gists</div>
@@ -152,6 +156,7 @@ const User = () => {
             </div>
           </div>
         </div>
+        <RepoList repos = {repos}/>
       </div>
     </>
   );
