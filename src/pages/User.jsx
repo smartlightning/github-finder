@@ -4,17 +4,31 @@ import { useContext, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import GithubContext from '../components/context/github/GithubContext';
 import RepoList from '../components/repos/RepoList';
+import {
+  getUserAndRepos,
+} from '../components/context/github/GithubActions';
 
 const User = () => {
-  const { getUser, user, loading, getUserRepos, repos } =
-    useContext(GithubContext);
+  const { user, loading, repos, dispatch } = useContext(GithubContext);
   const params = useParams();
 
   useEffect(() => {
-    getUser(params.login);
-    getUserRepos(params.login);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      // start loading
+    dispatch({
+      type: 'SET_LOADING',
+    });
+
+    // get Users and update the state
+    const getUserData = async () => {
+      const userData = await getUserAndRepos(params.login);
+      dispatch({
+        type: 'GET_USER_AND_REPOS',
+        payload: userData,
+      });
+    };
+    // call the function
+    getUserData();
+  }, [dispatch, params.login]);
 
   const {
     name,
@@ -156,7 +170,7 @@ const User = () => {
             </div>
           </div>
         </div>
-        <RepoList repos = {repos}/>
+        <RepoList repos={repos} />
       </div>
     </>
   );
